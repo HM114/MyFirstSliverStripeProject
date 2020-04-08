@@ -1,0 +1,16 @@
+---
+Name: mytheme
+---
+
+SilverStripe\ORM\Search\FulltextSearchable:
+  enabled: 'true'
+
+SilverStripe\View\SSViewer:
+  themes:
+    - '$public'
+    - 'simple'
+    - '$default'
+
+
+
+
