@@ -5,6 +5,7 @@ use SilverStripe\GraphQL\QueryFilter\Filters\GreaterThanFilter;
 use SilverStripe\ORM\Connect\MySQLSchemaManager;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\Filters\PartialMatchFilter;
+use SilverStripe\ORM\PaginatedList;
 use SilverStripe\ORM\Search\SearchContext;
 
 class MyDataObject extends DataObject{
@@ -42,4 +43,6 @@ class MyDataObject extends DataObject{
             $filters
         );
     }
+
+
 }
