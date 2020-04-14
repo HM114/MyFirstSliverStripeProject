@@ -4,12 +4,18 @@ namespace App\Forms;
 
 
 use MyDataObject;
+use Page;
 use PageController;
 use SilverStripe\CMS\Search\SearchForm;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Convert;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DB;
 use SilverStripe\ORM\PaginatedList;
 
 
@@ -23,57 +29,100 @@ class HomePageController extends PageController
     }
 
     private static $allowed_actions =[
-        'SearchForm'
+        'SearchForm',
+        'doSearch'
     ];
 
     public function SearchForm()
     {
-        $context = singleton(MyDataObject::class)->getCustomSearchContext();
-        $fields = $context->getSearchFields();
+        $context = singleton(MyDataObject::class)->getDefaultSearchContext();
+        $fields = singleton(MyDataObject::class)->getSearchFields();
 
         $form =  SearchForm::create($this, __FUNCTION__,
             $fields,
             FieldList::create(
-                FormAction::create('doSearch')
+                FormAction::create('results')
             )
         );
-        echo "searchform";
+        //echo "searchform";
 
         return $form;
 
     }
 
-    public function doSearch($data, $form)
+    public function results($data, $form)
     {
-        $context = singleton(MyDataObject::class)->getCustomSearchContext();
+       // $context = singleton(MyDataObject::class)->getCustomSearchContext();
+
         $results = $this->getResults($data);
-        var_dump($data);
-        die;
+
         return $this->customise([
             'Results' => $results
-        ])->renderWith('Page_results');
+        ])->renderWith(array('Page_results','Page'));
     }
 
     public function getResults($searchCriteria = [])
     {
-        $start = ($this->getRequest()->getVar('start')) ? (int)$this->getRequest()->getVar('start') : 0;
-        $limit = 10;
-        echo 1;
-        $context = singleton(MyDataObject::class)->getCustomSearchContext();
-        echo 2;
-        $query = $context->getQuery($searchCriteria, null, ['start'=>$start,'limit'=>$limit]);
-        echo 3;
-        $records = $context->getResults($searchCriteria, null, ['start'=>$start,'limit'=>$limit]);
-        echo 4;
+//        $start = ($this->getRequest()->getVar('start')) ? (int)$this->getRequest()->getVar('start') : 0;
+//        $limit = 10;
+//
+//        $context = singleton(MyDataObject::class)->getCustomSearchContext();
+//        var_dump($searchCriteria);
+//        $query = $context->getQuery($searchCriteria, null, ['start'=>$start,'limit'=>$limit]);
+//        $records = $context->getResults($searchCriteria, null, ['start'=>$start,'limit'=>$limit]);
+//
+//       // var_dump($records);
+//
+//        if($records) {
+//            try {
+//                $records = new PaginatedList($records, $this->getRequest());
+//            } catch (\Exception $e) {
+//            }
+//            $records->setPageStart($start);
+//            $records->setPageLength($limit);
+//            //$records->setTotalItems($query->unlimitedRowCount());
+//        }
 
-        if($records) {
-            $records = new PaginatedList($records, $this->getRequest());
-            $records->setPageStart($start);
-            $records->setPageLength($limit);
-            $records->setTotalItems($query->unlimitedRowCount());
+
+        $conn = DB::get_conn();
+        $list = new ArrayList();
+
+        //$q = (isset($searchCriteria['Search'])) ? $searchCriteria['Search'] : $request->getVar('Search');
+
+        $input = Convert::raw2sql($searchCriteria['Search']);
+       // echo $input;
+        $query = "SELECT * FROM \"mydataobject\" WHERE MATCH (\"Title\", \"Content\") AGAINST ('$input' IN BOOLEAN MODE)";
+
+        $results = DB::query($query);
+
+        foreach ($results as $row) {
+            $do = DataObject::get_by_id($row['ClassName'], $row['ID']);
+            if (is_object($do) && $do->exists()) {
+
+
+                $allPages = Page::get();
+                foreach($allPages AS $page) {
+                    if($row['Title']== $page->Title) {
+                        $link = $page->Link();
+                    }
+                }
+
+                $list->push(['Title'=> $row['Title'],
+                    'Content'=> $row['Content'],
+                    'Link'=>$link]);
+            }
+
         }
 
-        return $records;
+
+
+
+        $pageLength = Config::inst()->get(HomePageController::class, 'items_per_page');
+        $ret = new PaginatedList($list);
+       // var_dump($list);
+        $ret->setPageLength($pageLength);
+
+        return $ret;
     }
 }
 
