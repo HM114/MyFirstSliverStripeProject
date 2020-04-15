@@ -4,10 +4,6 @@ namespace {
 
     use App\Forms\SignupPage;
     use SilverStripe\CMS\Controllers\ContentController;
-    use SilverStripe\CMS\Search\SearchForm;
-    use SilverStripe\Forms\FieldList;
-    use SilverStripe\Forms\Form;
-    use SilverStripe\Forms\FormAction;
     use SilverStripe\View\Requirements;
 
 
@@ -29,7 +25,8 @@ namespace {
          * @var array
          */
         private static $allowed_actions = [
-            'SearchForm'
+            'SearchForm',
+            'myobjects'
         ];
 
         protected function init()

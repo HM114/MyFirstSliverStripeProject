@@ -3,16 +3,17 @@
 namespace App\Forms;
 
 
+
 use MyDataObject;
 use Page;
 use PageController;
 use SilverStripe\CMS\Search\SearchForm;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\Control\HTTPRequest;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
@@ -30,8 +31,12 @@ class HomePageController extends PageController
 
     private static $allowed_actions =[
         'SearchForm',
-        'doSearch'
+        'doSearch',
+        'myobjects'
     ];
+
+
+
 
     public function SearchForm()
     {
@@ -84,6 +89,7 @@ class HomePageController extends PageController
 //        }
 
 
+
         $conn = DB::get_conn();
         $list = new ArrayList();
 
@@ -94,28 +100,17 @@ class HomePageController extends PageController
         $query = "SELECT * FROM \"mydataobject\" WHERE MATCH (\"Title\", \"Content\") AGAINST ('$input' IN BOOLEAN MODE)";
 
         $results = DB::query($query);
-
+        var_dump($results->numRecords());
         foreach ($results as $row) {
             $do = DataObject::get_by_id($row['ClassName'], $row['ID']);
             if (is_object($do) && $do->exists()) {
 
-
-                $allPages = Page::get();
-                foreach($allPages AS $page) {
-                    if($row['Title']== $page->Title) {
-                        $link = $page->Link();
-                    }
-                }
-
                 $list->push(['Title'=> $row['Title'],
                     'Content'=> $row['Content'],
-                    'Link'=>$link]);
+                    'Link'=>$do->Link()]);
             }
 
         }
-
-
-
 
         $pageLength = Config::inst()->get(HomePageController::class, 'items_per_page');
         $ret = new PaginatedList($list);

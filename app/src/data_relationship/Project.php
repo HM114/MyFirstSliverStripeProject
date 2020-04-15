@@ -4,6 +4,7 @@
 namespace App\Code;
 
 
+use MyDataObject;
 use Page;
 use App\Code\Student;
 use App\Code\Mentor;
@@ -15,7 +16,8 @@ use SilverStripe\Forms\GridField\GridFieldDataColumns;
 class Project extends Page
 {
     private static $has_many = [
-        'Students' => Student::class
+        'Students' => Student::class,
+        'MyDataObject' => MyDataObject::class
     ];
 
     private static $many_many = [

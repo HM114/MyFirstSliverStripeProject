@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Code\Project;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\Connect\MySQLSchemaManager;
@@ -17,15 +18,18 @@ class MyDataObject extends DataObject {
         'Content' => 'Text'
     ];
 
-//    private static $indexes = [
-//        'SearchFields' => [
-//            'type' => 'fulltext',
-//            'columns' => ['Title', 'Content'],
-//        ]
-//    ];
-
     private static $create_table_options = [
         MySQLSchemaManager::ID => 'ENGINE=MyISAM'
+    ];
+
+    public function Link() {
+        return $this->Project()->Link('myobjects/'.$this->ID);
+        //BASE_URL.'/home/myobjects/'. $this->ID;
+        //Page::get()->First()->Link() . 'myobjects/'
+    }
+
+    private static $has_one = [
+        'Project' => Project::class
     ];
 
     /**
