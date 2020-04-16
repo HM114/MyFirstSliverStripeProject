@@ -2,6 +2,7 @@
 
 
 use App\Code\Project;
+use App\Code\Student;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\Connect\MySQLSchemaManager;
@@ -29,8 +30,11 @@ class MyDataObject extends DataObject {
     }
 
     private static $has_one = [
-        'Project' => Project::class
+        'Project' => Project::class,
+        'Students' => Student::class
     ];
+
+
 
     /**
      * generates the fields for the SearchForm

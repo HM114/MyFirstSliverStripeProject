@@ -11,4 +11,9 @@ use SilverStripe\Security\Security;
 class StudentController extends PageController
 {
 //'MyDataObject' => MyDataObject::class
+
+    private static $allowed_actions = [
+        'Link'
+    ];
+
 }

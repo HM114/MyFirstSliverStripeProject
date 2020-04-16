@@ -5,6 +5,7 @@ namespace App\Forms;
 
 
 use App\DataModel\CreateUser;
+use MyMemberExtension;
 use PageController;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -18,6 +19,10 @@ class SignupPageController extends PageController
     private static $allowed_actions = [
         'Register',
         'afterregistration'
+    ];
+
+    protected $extraDataObjects = [
+     MyMemberExtension::class
     ];
 
     public function init()
@@ -45,6 +50,8 @@ class SignupPageController extends PageController
     }
 
     public function doRegister($data, $form){
+
+
 
         if($user = CreateUser::get()->filter('Email', $data['Email'])->first()){
             $form->sessionMessage('This is already used by another user');

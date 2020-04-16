@@ -8,6 +8,7 @@ SilverStripe\SiteConfig\SiteConfig:
         extensions:
           - App\Extensions\SiteConfigExtension
 
+
 ---
 Name: my-project-assetsflysystem
 After: '#assetsflysystem'

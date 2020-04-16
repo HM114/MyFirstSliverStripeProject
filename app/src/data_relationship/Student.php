@@ -4,6 +4,7 @@
 namespace App\Code;
 
 use App\Code\Project;
+use MyDataObject;
 use SilverStripe\ORM\DataObject;
 
 class Student extends DataObject
@@ -14,11 +15,26 @@ class Student extends DataObject
     );
 
     private static $has_one = [
-        'Project' => Project::class
+        'Project' => Project::class,
+//
     ];
 
-    function getInfo() {
-        return $this->renderWith('StudentInfo');
+    private static $has_many = [
+            'MyDataObject' => MyDataObject::class
+    ];
+
+    private static $allowed_actions = [
+        'getInfo'
+    ];
+
+    public function Link()
+    {
+        return $this->Project()->Link('students/'.$this->ID);
+    }
+
+    public function getInfo() {
+       // echo "link". $this->getRegisterLink();
+        return  $this->renderWith(array('StudentInfo','Page'));
     }
 
 }

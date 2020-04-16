@@ -31,7 +31,6 @@ class HomePageController extends PageController
 
     private static $allowed_actions =[
         'SearchForm',
-        'doSearch',
         'myobjects'
     ];
 
@@ -60,7 +59,7 @@ class HomePageController extends PageController
        // $context = singleton(MyDataObject::class)->getCustomSearchContext();
 
         $results = $this->getResults($data);
-
+        //var_dump($results);
         return $this->customise([
             'Results' => $results
         ])->renderWith(array('Page_results','Page'));
@@ -97,17 +96,20 @@ class HomePageController extends PageController
 
         $input = Convert::raw2sql($searchCriteria['Search']);
        // echo $input;
-        $query = "SELECT * FROM \"mydataobject\" WHERE MATCH (\"Title\", \"Content\") AGAINST ('$input' IN BOOLEAN MODE)";
+        $query = "SELECT * FROM \"mydataobject\" WHERE MATCH (\"Title\", \"Content\") AGAINST ('$input' IN BOOLEAN MODE) ";
 
         $results = DB::query($query);
-        var_dump($results->numRecords());
+
         foreach ($results as $row) {
             $do = DataObject::get_by_id($row['ClassName'], $row['ID']);
             if (is_object($do) && $do->exists()) {
 
+                //$students = $do->Students();
+               // var_dump($do);
                 $list->push(['Title'=> $row['Title'],
                     'Content'=> $row['Content'],
                     'Link'=>$do->Link()]);
+
             }
 
         }

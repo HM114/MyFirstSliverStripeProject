@@ -8,7 +8,7 @@ SilverStripe\ORM\Search\FulltextSearchable:
 SilverStripe\View\SSViewer:
   themes:
     - '$public'
-    - 'simple'
+    - 'mytheme'
     - '$default'
 
 
