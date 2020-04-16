@@ -24,7 +24,7 @@ class MyDataObject extends DataObject {
     ];
 
     public function Link() {
-        return $this->Project()->Link('myobjects/'.$this->ID);
+        return $this->Students()->Link('myobjects/'.$this->ID);
         //BASE_URL.'/home/myobjects/'. $this->ID;
         //Page::get()->First()->Link() . 'myobjects/'
     }

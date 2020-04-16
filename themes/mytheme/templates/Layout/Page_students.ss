@@ -1,4 +1,4 @@
 <h1>Students</h1>
-<% loop $Students %>
+<% loop $Student %>
 $Title ($University)
 <% end_loop %>
