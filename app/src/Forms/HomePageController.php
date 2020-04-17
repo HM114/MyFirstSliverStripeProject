@@ -4,6 +4,7 @@ namespace App\Forms;
 
 
 
+use Couchbase\MatchSearchQuery;
 use MyDataObject;
 use Page;
 use PageController;
@@ -18,6 +19,7 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\PaginatedList;
+use SilverStripe\ORM\Queries\SQLSelect;
 
 
 class HomePageController extends PageController
@@ -100,6 +102,16 @@ class HomePageController extends PageController
 
         $results = DB::query($query);
 
+       /* echo "Simple SQL query";
+        $where = "MATCH (Title, Content) AGAINST ('$input' IN BOOLEAN MODE)";
+        $orm_query = SQLSelect::create()
+            ->setFrom('mydataobject')
+            ->setWhere($where)
+            ->toSelect();
+        $orm_query->execute();
+
+        var_dump($results);*/
+
         foreach ($results as $row) {
             $do = DataObject::get_by_id($row['ClassName'], $row['ID']);
             if (is_object($do) && $do->exists()) {
@@ -108,7 +120,7 @@ class HomePageController extends PageController
                // var_dump($do);
                 $list->push(['Title'=> $row['Title'],
                     'Content'=> $row['Content'],
-                    'Link'=>$do->Link()]);
+                    'Link'=>$do->Link($row['Title'])]);
 
             }
 

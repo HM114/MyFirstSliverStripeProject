@@ -29,7 +29,7 @@ class Student extends DataObject
 
     public function Link()
     {
-        return $this->Project()->Link('students/'.$this->ID);
+        return $this->Project()->Link('students_s/'.$this->ID);
     }
 
     public function getInfo() {

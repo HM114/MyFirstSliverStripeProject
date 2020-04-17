@@ -16,6 +16,7 @@ use SilverStripe\Forms\GridField\GridFieldDataColumns;
 class Project extends Page
 {
     private static $has_many = [
+        'Students_s' => Student::class,
         'Students' => Student::class,
         'MyDataObject' => MyDataObject::class
     ];

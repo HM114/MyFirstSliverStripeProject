@@ -23,10 +23,9 @@ class MyDataObject extends DataObject {
         MySQLSchemaManager::ID => 'ENGINE=MyISAM'
     ];
 
-    public function Link() {
-        return $this->Students()->Link('myobjects/'.$this->ID);
-        //BASE_URL.'/home/myobjects/'. $this->ID;
-        //Page::get()->First()->Link() . 'myobjects/'
+    public function Link($class) {
+        return $this->$class()->Link('myobjects/'.$this->ID);
+
     }
 
     private static $has_one = [
